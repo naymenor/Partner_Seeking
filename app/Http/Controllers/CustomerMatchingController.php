@@ -21,22 +21,13 @@ class CustomerMatchingController extends Controller
     
         // Initialize an array to hold the results
         $data = [];
-    
-        // Loop through each matching record
         foreach ($matchingList as $matchingl) {
-            // Retrieve the sender profile (user_id)
             $senderProfile = CustomerProfile::where('user_id', $matchingl->user_id)->first();
+            $receiverProfile = CustomerProfile::where('user_id', $matchingl->matchingUser)->first();
     
-            // Retrieve the receiver profile (matchingUser)
-            $receiverProfile = CustomerProfile::where('uuid', $matchingl->matchingUser)->first();
-    
-            // Check if both profiles exist
             if ($senderProfile && $receiverProfile) {
-                // Extract profile data for sender and receiver
-                $data1 = extractProfileData($senderProfile);  // Use the global function here
-                $data2 = extractProfileData($receiverProfile); // Use the global function here
-    
-                // Add the matching record and associated profiles to the result set
+                $data1 = extractProfileData($senderProfile);  
+                $data2 = extractProfileData($receiverProfile); 
                 $data[] = [
                     'matching_details' => $matchingl,
                     'sender' => $data1,
@@ -45,15 +36,101 @@ class CustomerMatchingController extends Controller
             }
         }
     
-        // Check if any data was retrieved
         if (empty($data)) {
             return response()->json([
                 'success' => false,
                 'message' => 'No matching profiles found',
             ], 404);
         }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Matching profiles retrieved successfully',
+            'data' => $data,
+        ], 200);
+    }
+
+    public function customerSelfindex()
+    {
+        // Retrieve all matching records
+        $matchingList = CustomerMatching::where('user_id', Auth::user()->id)->get();
     
-        // Return the data as a JSON response
+        // Initialize an array to hold the results
+        $data = [];
+        foreach ($matchingList as $matchingl) {
+            // $senderProfile = CustomerProfile::where('user_id', $matchingl->user_id)->first();
+            $receiverProfile = CustomerProfile::where('user_id', $matchingl->matchingUser)->first();
+    
+            if ($receiverProfile) {
+                // $data1 = extractProfileData($senderProfile); 
+                if($matchingl->approveByAdmin == '1')
+                {
+                    $data2 = extractProfilecustomerfullData($receiverProfile); 
+                }
+                else
+                {
+                    $data2 = extractProfileData($receiverProfile); 
+                }
+                
+                $data[] = [
+                    'matching_details' => $matchingl,
+                    // 'sender' => $data1,
+                    'receiver' => $data2
+                ];
+            }
+        }
+    
+        if (empty($data)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No matching profiles found',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Matching profiles retrieved successfully',
+            'data' => $data,
+        ], 200);
+    }
+
+    public function customerSelfRequestindex()
+    {
+        // Retrieve all matching records
+        $matchingList = CustomerMatching::where('matchingUser', Auth::user()->id)->get();
+    
+        // Initialize an array to hold the results
+        $data = [];
+        foreach ($matchingList as $matchingl) {
+            // $senderProfile = CustomerProfile::where('user_id', $matchingl->user_id)->first();
+            $receiverProfile = CustomerProfile::where('user_id', $matchingl->user_id)->first();
+    
+            if ($receiverProfile) {
+                // $data1 = extractProfileData($senderProfile); 
+                if($matchingl->approveByAdmin == '1')
+                {
+                    $data2 = extractProfilecustomerfullData($receiverProfile); 
+                }
+                else
+                {
+                    $data2 = extractProfileData($receiverProfile); 
+                }
+                
+                $data[] = [
+                    'matching_details' => $matchingl,
+                    // 'sender' => $data1,
+                    'receiver' => $data2
+                ];
+            }
+        }
+    
+        if (empty($data)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No matching profiles found',
+            ], 404);
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'Matching profiles retrieved successfully',
@@ -83,10 +160,7 @@ class CustomerMatchingController extends Controller
                 [
                     'matchingUser' => 'required',
                 ],
-
                 []
-
-
             );
 
             if ($validate->fails()) {
@@ -101,17 +175,14 @@ class CustomerMatchingController extends Controller
 
                 $uuid = Str::uuid()->toString();
 
-
                 $matchinglist = CustomerMatching::create([
                     'uuid' => $uuid,
                     'user_id' => Auth::user()->id,
-                    'matchingUser' => $request->matchingUser,
+                    'matchingUser' => $request->user_id,
                     'acceptBysender' => 1,
                     'acceptByreceiver' => 0,
                     'approveByAdmin' => 0,
                     'status' => 1,
-
-
                 ]);
 
                 if ($matchinglist) {
@@ -154,9 +225,103 @@ class CustomerMatchingController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function adminAppreoval(Request $request, string $id)
     {
         //
+        try {
+            $validate = Validator::make(
+                $request->all(),
+                [
+                    'approveByAdmin' => 'required',
+                ],
+                []
+            );
+        
+            if ($validate->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation error',
+                    'errors' => $validate->errors()
+                ], 422);
+            }
+        
+            if (Auth::check()) {
+                // Check if the record exists
+                $matchinglist = CustomerMatching::where('uuid', $id)->first();
+        
+                if ($matchinglist) {
+                    // Update the record
+                    $matchinglist->update([
+                        'approveByAdmin' => $request->input('approveByAdmin', $matchinglist->approveByAdmin),
+                    ]);
+        
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Record updated successfully',
+                    ], 200);
+                } else {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Record not found',
+                    ], 404);
+                }
+            }
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success' => false,
+                'message' => $th->getMessage()
+            ], 500);
+        }
+    }
+
+    public function receiverAppreoval(Request $request, string $id)
+    {
+        //
+        try {
+            $validate = Validator::make(
+                $request->all(),
+                [
+                    'acceptByreceiver' => 'required',
+                ],
+                []
+            );
+        
+            if ($validate->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation error',
+                    'errors' => $validate->errors()
+                ], 422);
+            }
+        
+            if (Auth::check()) {
+                // Check if the record exists
+                $matchinglist = CustomerMatching::where('uuid', $id)
+                    ->first();
+        
+                if ($matchinglist) {
+                    // Update the record
+                    $matchinglist->update([
+                        'acceptByreceiver' => $request->input('acceptByreceiver', $matchinglist->acceptByreceiver),
+                    ]);
+        
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Record updated successfully',
+                    ], 200);
+                } else {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Record not found',
+                    ], 404);
+                }
+            }
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success' => false,
+                'message' => $th->getMessage()
+            ], 500);
+        }
     }
 
     /**

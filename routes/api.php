@@ -41,6 +41,8 @@ Route::group(["prefix"=>"admin",'middleware' => ['auth:sanctum','roleChecker:adm
     Route::get('profile/customer/details/{id}', [CustomerProfileController::class, 'adminsingleshow'])->name('adminsingleCustomer');
     Route::post('profile/customer/status/{id}', [CustomerProfileController::class, 'admininactive'])->name('admindeactiveCustomer');
     Route::get('matched', [CustomerMatchingController::class, 'index'])->name('matching');
+    Route::put('matched/accept/{id}', [CustomerMatchingController::class, 'adminAppreoval'])->name('matchingadminAppreoval');
+    
 
     Route::resource('/payment', CustomerPaymentController::class);
     
@@ -55,7 +57,9 @@ Route::group(["prefix"=>"customer",'middleware' => ['auth:sanctum','roleChecker:
     Route::get('profile/self/details', [CustomerProfileController::class, 'customerselfshow'])->name('showSelfCustomer');
     Route::get('payment', [CustomerPaymentController::class, 'customerindex'])->name('paymentCustomer');
     Route::post('matching', [CustomerMatchingController::class, 'store'])->name('matchingCustomer');
-    
+    Route::get('matching/list', [CustomerMatchingController::class, 'customerSelfindex'])->name('matchingselfCustomer');
+    Route::get('matching/request/list', [CustomerMatchingController::class, 'customerSelfRequestindex'])->name('matchingRequestCustomer');
+    Route::put('matching/accept/{id}', [CustomerMatchingController::class, 'receiverAppreoval'])->name('matchingreceiverAppreoval');
     
     Route::resource('/shortlist', CustomerShortListController::class);
 });

@@ -17,7 +17,7 @@ class CustomerProfileController extends Controller
      */
     public function index()
     {
-        $profilelist = CustomerProfile::get();
+        $profilelist = CustomerProfile::orderBy('updated_at', 'asc')->get();
 
         if ($profilelist->isNotEmpty()) {
             $data = $profilelist->map(function ($profile) {
@@ -41,6 +41,7 @@ class CustomerProfileController extends Controller
         $profilelist = CustomerProfile::
          where('is_verified', '1')
         ->where('status', '1')
+        ->orderBy('updated_at', 'asc')
         ->get();
         if ($profilelist->isNotEmpty()) {
             $data = $profilelist->map(function ($profile) {
@@ -121,7 +122,7 @@ class CustomerProfileController extends Controller
     public function shortindex()
     {
         //
-        $profilelist = CustomerProfile::where('is_verified','1')->where('status','1')->paginate(10);
+        $profilelist = CustomerProfile::where('is_verified','1')->where('status','1')->orderBy('updated_at', 'asc')->get();
         if ($profilelist->isNotEmpty()) {
             $data = $profilelist->map(function ($profile) {
                 return extractProfileData($profile);  // Use the global function here

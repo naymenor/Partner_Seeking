@@ -11,6 +11,7 @@ if (!function_exists('adminProfileData')) {
 
         return [
             'uuid' => $profile->uuid,
+            'user_id' => $profile->user_id,
             'name' => $personalInfos['name'],
             'age' => $personalInfos['age'],
             'gender' => $personalInfos['gender'],
@@ -41,6 +42,7 @@ if (!function_exists('extractProfileData')) {
 
         return [
             'uuid' => $profile->uuid,
+            'user_id' => $profile->user_id,
             'name' => $personalInfos['name'],
             'age' => $personalInfos['age'],
             'gender' => $personalInfos['gender'],
@@ -67,6 +69,7 @@ if (!function_exists('extractProfileDatafullviewformachedcustomer')) {
 
         return [
             'uuid' => $profile->uuid,
+            'user_id' => $profile->user_id,
             'personal_infos' => [
                 'name' => $personalInfos['name'],
                 'age' => $personalInfos['age'],
