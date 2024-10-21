@@ -339,7 +339,7 @@ class CustomerProfileController extends Controller
             $validate = Validator::make(
                 $request->all(),
                 [
-                    'user_id' => 'string|unique:customer_profiles',
+                
                 ]
             );
             if ($validate->fails()) {
@@ -351,6 +351,13 @@ class CustomerProfileController extends Controller
             }
 
             if (Auth::check()) {
+                if (CustomerProfile::where('user_id', Auth::user()->id)->exists()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'User already has a customer profile',
+                    ], 409); // 409 Conflict if the profile already exists
+                }
+                else{
                 $uuid = Str::uuid()->toString();
                 $Crprofile = CustomerProfile::create([
                     'uuid' => $uuid,
@@ -378,6 +385,7 @@ class CustomerProfileController extends Controller
                         'success' => false,
                         'message' => 'Some thing went worng',
                     ], 500);
+                }
                 }
             }
         } catch (\Throwable $th) {

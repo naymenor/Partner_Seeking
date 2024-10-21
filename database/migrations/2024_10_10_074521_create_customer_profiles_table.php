@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('customer_profiles', function (Blueprint $table) {
             $table->id();
             $table->string('uuid');
-            $table->foreignId('user_id')->constrained()->onUpdate('cascade')->onDelete('cascade')->nullable();
+            $table->foreignId('user_id')->constrained()->onUpdate('cascade')->onDelete('cascade')->nullable()->unique();
             $table->string('registration_fee')->nullable();
             $table->text('personal_infos')->nullable();
             $table->text('demographic_infos')->nullable();
