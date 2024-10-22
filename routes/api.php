@@ -57,7 +57,7 @@ Route::group(["prefix"=>"customer",'middleware' => ['auth:sanctum','roleChecker:
     Route::post('profile/list/filter', [CustomerProfileController::class, 'customerfilteedindex'])->name('customerfiltredlist');
     Route::post('profile/create', [CustomerProfileController::class, 'customerstore'])->name('createSelfCustomer');
     Route::get('profile/self/details', [CustomerProfileController::class, 'customerselfshow'])->name('showSelfCustomer');
-    Route::post('profile/self/update/', [CustomerProfileController::class, 'customerupdate'])->name('customerupdateCustomer');
+    Route::put('profile/self/update/', [CustomerProfileController::class, 'customerupdate'])->name('customerupdateCustomer');
     Route::get('payment', [CustomerPaymentController::class, 'customerindex'])->name('paymentCustomer');
     Route::post('matching', [CustomerMatchingController::class, 'store'])->name('matchingCustomer');
     Route::get('matching/list', [CustomerMatchingController::class, 'customerSelfindex'])->name('matchingselfCustomer');
