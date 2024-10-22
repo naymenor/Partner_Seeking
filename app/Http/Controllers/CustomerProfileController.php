@@ -38,11 +38,11 @@ class CustomerProfileController extends Controller
 
     public function annonindex()
     {
-        $profilelist = CustomerProfile::
-         where('is_verified', '1')
+        $profilelist = CustomerProfile::where('is_verified', '1')
         ->where('status', '1')
         ->orderBy('updated_at', 'asc')
         ->get();
+        
         if ($profilelist->isNotEmpty()) {
             $data = $profilelist->map(function ($profile) {
                 return extractProfileData($profile);
@@ -522,6 +522,24 @@ class CustomerProfileController extends Controller
 
         try {
             $profile = CustomerProfile::where('uuid', $id)->firstOrFail();
+            $profile->update($request->all());
+
+            return response()->json(['success' => true, 'message' => 'Profile updated successfully', 'data' => $profile], 200);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function customerupdate(Request $request)
+    {
+
+        if (!Auth::check()) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 401);
+        }
+
+        try {
+            $user_id  = Auth::user()->id;
+            $profile = CustomerProfile::where('user_id', $user_id)->firstOrFail();
             $profile->update($request->all());
 
             return response()->json(['success' => true, 'message' => 'Profile updated successfully', 'data' => $profile], 200);

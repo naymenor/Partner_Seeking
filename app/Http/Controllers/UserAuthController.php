@@ -11,6 +11,25 @@ use Illuminate\Support\Facades\Validator;
 class UserAuthController extends Controller
 {
     //
+    public function userlist()
+    {
+        $userlist = User::get();
+
+        if ($userlist->isNotEmpty()) {
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data retrieved successfully',
+                'data' => $userlist,
+            ], 200);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'No data found',
+            ], 404);
+        }
+    }
+    
     public function register(Request $request){
         $registerUserData = $request->validate([
             'mobile'=>'required|string|unique:users',
