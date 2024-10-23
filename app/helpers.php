@@ -2,12 +2,12 @@
 if (!function_exists('adminProfileData')) {
     function adminProfileData($profile)
     {
-        $personalInfos = json_decode($profile->personal_infos, true) ?? '{}';
-        $demographic_infos = json_decode($profile->demographic_infos, true) ?? '{}';
-        $religious_infos = json_decode($profile->religious_infos, true) ?? '{}';
-        $educational_infos = json_decode($profile->educational_infos, true) ?? '{}';
-        $employment_infos = json_decode($profile->employment_infos, true) ?? '{}';
-        $marital_infos = json_decode($profile->marital_infos, true) ?? '{}';
+        $personalInfos = json_decode($profile->personal_infos, true);
+        $demographic_infos = json_decode($profile->demographic_infos, true);
+        $religious_infos = json_decode($profile->religious_infos, true);
+        $educational_infos = json_decode($profile->educational_infos, true);
+        $employment_infos = json_decode($profile->employment_infos, true);
+        $marital_infos = json_decode($profile->marital_infos, true);
 
         return [
             'uuid' => $profile->uuid,

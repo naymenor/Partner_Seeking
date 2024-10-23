@@ -47,16 +47,81 @@ class UserAuthController extends Controller
         if($user)
         {   
             $uuid = Str::uuid()->toString();
+            $personal_infos = [
+                "name"=> "",
+                "father_name"=> "",
+                "mother_name"=> "",
+                "age"=> ,
+                "gender"=> "",
+                "line_address"=> "",
+                "upazila"=> "",
+                "district"=> "",
+                "contact_no"=> "",
+                "email"=> "",
+                "nid_no"=> "",
+                "guardian_name"=> "",
+                "relation_guardian"=> "",
+                "guardian_mobile"=> "",
+                "guardian_email"=> "",
+                "guardian_nid"=> "",
+                "lives_in"=> "",
+                "country_name_if_abroad"=> "",
+                "number_of_sibling"=> 
+            ];
+            $demographic_infos = [
+                "height"=> "",
+                "skin_color"=> "",
+                "hair_color"=> ""
+            ];
+            $educational_infos = [
+                "education_level"=> "",
+                "institute"=> "",
+                "major"=> "",
+                "passing_year"=> 
+            ];
+
+            $employment_infos = [
+                "employment_status"=> "",
+                "employment_type"=> "",
+                "job_type"=> "",
+                "designation"=> "",
+                "organization"=> "".
+                "org_type"=> "",
+                "job_experience"=> "",
+                "salary"=> ""
+            ];
+            
+            $marital_infos = [
+                "marital_status"=> "",
+                "has_children"=> ,
+                "no_children"=> ,
+                "age_of_first"=> 
+            ];
+            
+            $referees_infos = [
+                "marital_status"=> "",
+                "has_children"=> true,
+                "no_children"=> 0,
+                "age_of_first"=> 0
+            ];
+
+            $religious_info = [
+                "marital_status"=> "",
+                "has_children"=> true,
+                "no_children"=> 2,
+                "age_of_first"=> 5
+            ]; 
+
             $Crprofile = CustomerProfile::create([
                 'uuid' => $uuid,
                 'user_id' => $user->id,
-                'personal_infos' => json_encode($request->personal_infos) ?? null,
-                'demographic_infos' => json_encode($request->demographic_infos) ?? null,
-                'educational_infos' => json_encode($request->educational_infos) ?? null,
-                'employment_infos' => json_encode($request->employment_infos) ?? null,
-                'marital_infos' => json_encode($request->marital_infos) ?? null,
-                'referees_infos' => json_encode($request->referees_infos) ?? null,
-                'religious_infos' => json_encode($request->religious_info) ?? null,
+                'personal_infos' => json_encode($personal_infos) ?? null,
+                'demographic_infos' => json_encode($demographic_infos) ?? null,
+                'educational_infos' => json_encode($educational_infos) ?? null,
+                'employment_infos' => json_encode($employment_infos) ?? null,
+                'marital_infos' => json_encode($marital_infos) ?? null,
+                'referees_infos' => json_encode($referees_infos) ?? null,
+                'religious_infos' => json_encode($religious_info) ?? null,
                 'is_verified' => 0,
                 'created_by' => 'SYSTEM',
                 'status' => 0,
