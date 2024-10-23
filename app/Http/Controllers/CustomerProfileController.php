@@ -41,7 +41,7 @@ class CustomerProfileController extends Controller
         $profilelist = CustomerProfile::where('is_verified', '1')
         ->where('status', '1')
         ->orderBy('updated_at', 'asc')
-        ->get();
+        ->paginate(10);
         
         if ($profilelist->isNotEmpty()) {
             $data = $profilelist->map(function ($profile) {
@@ -65,7 +65,7 @@ class CustomerProfileController extends Controller
     public function annonfilterindex(Request $request)
     {
         // Start building the query
-        $query = CustomerProfile::query();
+        $query = CustomerProfile::query()->paginate(10);
 
         // Define possible filters
         $filters = [
