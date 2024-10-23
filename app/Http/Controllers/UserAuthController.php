@@ -99,17 +99,23 @@ class UserAuthController extends Controller
             ];
             
             $referees_infos = [
-                "marital_status"=> "",
-                "has_children"=> true,
-                "no_children"=> 0,
-                "age_of_first"=> 0
+                "name"=> "",
+                "designation"=> "",
+                "organization"=> "",
+                "mobile_number"=> "",
+                "email_id"=> "",
+                "relation_with_candidate" => ""
             ];
 
+
             $religious_info = [
-                "marital_status"=> "",
-                "has_children"=> true,
-                "no_children"=> 2,
-                "age_of_first"=> 5
+                "religion"=> "",
+                "sect"=> "",
+                "pray_5_times"=> true,
+                "wear_burka"=> true,
+                "recit_quran"=> true,
+                "read_quaran_daily"=> true,
+                "follow_sharia_rule"=> true
             ]; 
 
             $Crprofile = CustomerProfile::create([
