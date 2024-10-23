@@ -81,7 +81,7 @@ class UserAuthController extends Controller
             'user_mobile' => $authuser->mobile,
         ]);
     }
-
+//test data
     public function logout(){
         auth()->user()->tokens()->delete();
     
