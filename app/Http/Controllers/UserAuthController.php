@@ -7,6 +7,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+use App\Models\CustomerProfile;
 
 class UserAuthController extends Controller
 {
@@ -42,8 +44,27 @@ class UserAuthController extends Controller
             'password' => Hash::make($registerUserData['password']),
             'userRoleId' => 'customer'
         ]);
+        if($user)
+        {   
+            $uuid = Str::uuid()->toString();
+            $Crprofile = CustomerProfile::create([
+                'uuid' => $uuid,
+                'user_id' => $user->id,
+                'personal_infos' => json_encode($request->personal_infos) ?? null,
+                'demographic_infos' => json_encode($request->demographic_infos) ?? null,
+                'educational_infos' => json_encode($request->educational_infos) ?? null,
+                'employment_infos' => json_encode($request->employment_infos) ?? null,
+                'marital_infos' => json_encode($request->marital_infos) ?? null,
+                'referees_infos' => json_encode($request->referees_infos) ?? null,
+                'religious_infos' => json_encode($request->religious_info) ?? null,
+                'is_verified' => 0,
+                'created_by' => 'SYSTEM',
+                'status' => 0,
+            ]);
+        }
         return response()->json([
             'message' => 'User Created ',
+            'data' => $Crprofile
         ]);
     }
 

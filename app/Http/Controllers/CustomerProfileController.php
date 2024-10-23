@@ -331,127 +331,127 @@ class CustomerProfileController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function customerstore(Request $request)
-    {
-        //
-        try {
+    // public function customerstore(Request $request)
+    // {
+    //     //
+    //     try {
 
-            $validate = Validator::make(
-                $request->all(),
-                [
+    //         $validate = Validator::make(
+    //             $request->all(),
+    //             [
                 
-                ]
-            );
-            if ($validate->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Validation error',
-                    'errors' => $validate->errors()
-                ], 422);
-            }
+    //             ]
+    //         );
+    //         if ($validate->fails()) {
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'message' => 'Validation error',
+    //                 'errors' => $validate->errors()
+    //             ], 422);
+    //         }
 
-            if (Auth::check()) {
-                if (CustomerProfile::where('user_id', Auth::user()->id)->exists()) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'User already has a customer profile',
-                    ], 409); // 409 Conflict if the profile already exists
-                }
-                else{
-                $uuid = Str::uuid()->toString();
-                $Crprofile = CustomerProfile::create([
-                    'uuid' => $uuid,
-                    'user_id' => Auth::user()->id,
-                    'personal_infos' => json_encode($request->personal_infos),
-                    'demographic_infos' => json_encode($request->demographic_infos),
-                    'educational_infos' => json_encode($request->educational_infos),
-                    'employment_infos' => json_encode($request->employment_infos),
-                    'marital_infos' => json_encode($request->marital_infos),
-                    'referees_infos' => json_encode($request->referees_infos),
-                    'religious_infos' => json_encode($request->religious_info),
-                    'is_verified' => 0,
-                    'created_by' => 'SELF',
-                    'status' => 0,
-                ]);
+    //         if (Auth::check()) {
+    //             if (CustomerProfile::where('user_id', Auth::user()->id)->exists()) {
+    //                 return response()->json([
+    //                     'success' => false,
+    //                     'message' => 'User already has a customer profile',
+    //                 ], 409); // 409 Conflict if the profile already exists
+    //             }
+    //             else{
+    //             $uuid = Str::uuid()->toString();
+    //             $Crprofile = CustomerProfile::create([
+    //                 'uuid' => $uuid,
+    //                 'user_id' => Auth::user()->id,
+    //                 'personal_infos' => json_encode($request->personal_infos),
+    //                 'demographic_infos' => json_encode($request->demographic_infos),
+    //                 'educational_infos' => json_encode($request->educational_infos),
+    //                 'employment_infos' => json_encode($request->employment_infos),
+    //                 'marital_infos' => json_encode($request->marital_infos),
+    //                 'referees_infos' => json_encode($request->referees_infos),
+    //                 'religious_infos' => json_encode($request->religious_info),
+    //                 'is_verified' => 0,
+    //                 'created_by' => 'SELF',
+    //                 'status' => 0,
+    //             ]);
 
-                if ($Crprofile) {
-                    return response()->json([
-                        'success' => true,
-                        'message' => 'Profile created Successfully',
-                        'data' => $Crprofile
-                    ], 202);
-                } else {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Some thing went worng',
-                    ], 500);
-                }
-                }
-            }
-        } catch (\Throwable $th) {
-            return response()->json([
-                'success' => false,
-                'message' => $th->getMessage()
-            ], 500);
-        }
-    }
+    //             if ($Crprofile) {
+    //                 return response()->json([
+    //                     'success' => true,
+    //                     'message' => 'Profile created Successfully',
+    //                     'data' => $Crprofile
+    //                 ], 202);
+    //             } else {
+    //                 return response()->json([
+    //                     'success' => false,
+    //                     'message' => 'Some thing went worng',
+    //                 ], 500);
+    //             }
+    //             }
+    //         }
+    //     } catch (\Throwable $th) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => $th->getMessage()
+    //         ], 500);
+    //     }
+    // }
 
-    public function adminstore(Request $request)
-    {
-        //
-        try {
+    // public function adminstore(Request $request)
+    // {
+    //     //
+    //     try {
 
-            $validate = Validator::make(
-                $request->all(),
-                [
-                    'user_id' => 'integer|unique:customer_profiles',
-                ]
-            );
-            if ($validate->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Validation error',
-                    'errors' => $validate->errors()
-                ], 422);
-            }
+    //         $validate = Validator::make(
+    //             $request->all(),
+    //             [
+    //                 'user_id' => 'integer|unique:customer_profiles',
+    //             ]
+    //         );
+    //         if ($validate->fails()) {
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'message' => 'Validation error',
+    //                 'errors' => $validate->errors()
+    //             ], 422);
+    //         }
 
-            if (Auth::check()) {
-                $uuid = Str::uuid()->toString();
-                $Crprofile = CustomerProfile::create([
-                    'uuid' => $uuid,
-                    'user_id' => $request->user_id,
-                    'personal_infos' => json_encode($request->personal_infos),
-                    'demographic_infos' => json_encode($request->demographic_infos),
-                    'educational_infos' => json_encode($request->educational_infos),
-                    'employment_infos' => json_encode($request->employment_infos),
-                    'marital_infos' => json_encode($request->marital_infos),
-                    'referees_infos' => json_encode($request->referees_infos),
-                    'religious_infos' => json_encode($request->religious_info),
-                    'is_verified' => 1,
-                    'created_by' => 'ADMIN',
-                    'status' => 1,
-                ]);
+    //         if (Auth::check()) {
+    //             $uuid = Str::uuid()->toString();
+    //             $Crprofile = CustomerProfile::create([
+    //                 'uuid' => $uuid,
+    //                 'user_id' => $request->user_id,
+    //                 'personal_infos' => json_encode($request->personal_infos),
+    //                 'demographic_infos' => json_encode($request->demographic_infos),
+    //                 'educational_infos' => json_encode($request->educational_infos),
+    //                 'employment_infos' => json_encode($request->employment_infos),
+    //                 'marital_infos' => json_encode($request->marital_infos),
+    //                 'referees_infos' => json_encode($request->referees_infos),
+    //                 'religious_infos' => json_encode($request->religious_info),
+    //                 'is_verified' => 1,
+    //                 'created_by' => 'ADMIN',
+    //                 'status' => 1,
+    //             ]);
 
-                if ($Crprofile) {
-                    return response()->json([
-                        'success' => true,
-                        'message' => 'Profile created Successfully',
-                        'data' => $Crprofile
-                    ], 202);
-                } else {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Some thing went worng',
-                    ], 500);
-                }
-            }
-        } catch (\Throwable $th) {
-            return response()->json([
-                'success' => false,
-                'message' => $th->getMessage()
-            ], 500);
-        }
-    }
+    //             if ($Crprofile) {
+    //                 return response()->json([
+    //                     'success' => true,
+    //                     'message' => 'Profile created Successfully',
+    //                     'data' => $Crprofile
+    //                 ], 202);
+    //             } else {
+    //                 return response()->json([
+    //                     'success' => false,
+    //                     'message' => 'Some thing went worng',
+    //                 ], 500);
+    //             }
+    //         }
+    //     } catch (\Throwable $th) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => $th->getMessage()
+    //         ], 500);
+    //     }
+    // }
 
     /**
      * Display the specified resource.
