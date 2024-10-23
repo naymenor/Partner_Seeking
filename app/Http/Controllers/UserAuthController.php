@@ -51,7 +51,7 @@ class UserAuthController extends Controller
                 "name"=> "",
                 "father_name"=> "",
                 "mother_name"=> "",
-                "age"=> ,
+                "age"=> "",
                 "gender"=> "",
                 "line_address"=> "",
                 "upazila"=> "",
@@ -66,7 +66,7 @@ class UserAuthController extends Controller
                 "guardian_nid"=> "",
                 "lives_in"=> "",
                 "country_name_if_abroad"=> "",
-                "number_of_sibling"=> 
+                "number_of_sibling"=> ""
             ];
             $demographic_infos = [
                 "height"=> "",
@@ -77,7 +77,7 @@ class UserAuthController extends Controller
                 "education_level"=> "",
                 "institute"=> "",
                 "major"=> "",
-                "passing_year"=> 
+                "passing_year"=>  ""
             ];
 
             $employment_infos = [
@@ -85,7 +85,7 @@ class UserAuthController extends Controller
                 "employment_type"=> "",
                 "job_type"=> "",
                 "designation"=> "",
-                "organization"=> "".
+                "organization"=> "",
                 "org_type"=> "",
                 "job_experience"=> "",
                 "salary"=> ""
@@ -93,9 +93,9 @@ class UserAuthController extends Controller
             
             $marital_infos = [
                 "marital_status"=> "",
-                "has_children"=> ,
-                "no_children"=> ,
-                "age_of_first"=> 
+                "has_children"=> "",
+                "no_children"=> "",
+                "age_of_first"=> ""
             ];
             
             $referees_infos = [
