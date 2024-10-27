@@ -66,57 +66,66 @@ class CustomerProfileController extends Controller
     {
         // Start building the query
         $query = CustomerProfile::query();
-
+    
         // Define possible filters
-        $filters = [
-            'personal_infos->gender' => $request->gender,
-            'personal_infos->age' => ['min' => $request->min_age, 'max' => $request->max_age],
-            'religious_infos->religion' => $request->religion,
-            'is_verified' => '1',
-            'status' => '1'
-
-        ];
-
+        $gender = $request->gender;
+        $religion = $request->religion;
+        $isVerified = '1';
+        $status = '1';
+        
         // Apply filters dynamically
-        foreach ($filters as $field => $value) {
-            // For direct value filters like gender, height, education_level, etc.
-            if (is_string($value) && !empty($value)) {
-                $query->where($field, $value);
-            }
-
-            // For range filters like age
-            if (is_array($value)) {
-                if (!empty($value['min']) && !empty($value['max'])) {
-                    $query->whereBetween($field, [$value['min'], $value['max']]);
-                } elseif (!empty($value['min'])) {
-                    $query->where($field, '>=', $value['min']);
-                } elseif (!empty($value['max'])) {
-                    $query->where($field, '<=', $value['max']);
-                }
+        if (!empty($gender)) {
+            // Use CAST to treat personal_infos as JSON for gender filtering
+            $query->whereRaw("CAST(personal_infos AS json)->>'gender' = ?", [$gender]);
+        }
+    
+        if (!empty($religion)) {
+            // Use CAST to treat religious_infos as JSON for religion filtering
+            $query->whereRaw("CAST(religious_infos AS json)->>'religion' = ?", [$religion]);
+        }
+    
+        // Apply static filters
+        $query->where('is_verified', $isVerified);
+        $query->where('status', $status);
+    
+        // Handle age filtering with min and max range
+        $ageMin = $request->min_age;
+        $ageMax = $request->max_age;
+        if (!empty($ageMin) || !empty($ageMax)) {
+            if ($ageMin && $ageMax) {
+                $query->whereRaw("CAST(personal_infos AS json)->>'age' BETWEEN ? AND ?", [$ageMin, $ageMax]);
+            } elseif ($ageMin) {
+                $query->whereRaw("CAST(personal_infos AS json)->>'age' >= ?", [$ageMin]);
+            } elseif ($ageMax) {
+                $query->whereRaw("CAST(personal_infos AS json)->>'age' <= ?", [$ageMax]);
             }
         }
-
-        // Get the filtered results
-        $profilelist = $query->paginate(10);
-
+    
+        // Paginate the filtered results
+        $profilelist = $query->paginate(10); // Adjust items per page as needed
+    
+        // Transform the data using a custom function
         $data = $profilelist->map(function ($profile) {
-            return extractProfileData($profile);
+            return extractProfileData($profile); // Ensure extractProfileData function is defined
         });
-
-        if (is_null($profilelist) || $profilelist->isEmpty()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Data retrieved successfully',
-                'data' => 'No Matched Profile Found',
-            ], 404);
-        } else {
-            return response()->json([
-                'success' => true,
-                'message' => 'Data retrieved successfully',
-                'data' => $data,
-            ], 200);
-        }
+    
+        // Return response with pagination info
+        return response()->json([
+            'success' => true,
+            'message' => 'Data retrieved successfully',
+            'data' => $data,
+            'pagination' => [
+                'current_page' => $profilelist->currentPage(),
+                'last_page' => $profilelist->lastPage(),
+                'total_items' => $profilelist->total(),
+                'items_per_page' => $profilelist->perPage(),
+                'next_page_url' => $profilelist->nextPageUrl(),
+                'previous_page_url' => $profilelist->previousPageUrl(),
+            ],
+        ], 200);
     }
+    
+
 
 
     public function shortindex()
