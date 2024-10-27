@@ -36,13 +36,13 @@ class CustomerProfileController extends Controller
         }
     }
 
-    public function annonindex()
+    public function annonindex(Request $request)
     {
         $profilelist = CustomerProfile::where('is_verified', '1')
-        ->where('status', '1')
-        ->orderBy('updated_at', 'asc')
-        ->paginate(10);
-        
+            ->where('status', '1')
+            ->orderBy('updated_at', 'asc')
+            ->paginate(10);
+
         if ($profilelist->isNotEmpty()) {
             $data = $profilelist->map(function ($profile) {
                 return extractProfileData($profile);
@@ -53,6 +53,15 @@ class CustomerProfileController extends Controller
                 'success' => true,
                 'message' => 'Data retrieved successfully',
                 'data' => $data,
+                'pagination' => [
+                    'current_page' => $profilelist->currentPage(),
+                    'last_page' => $profilelist->lastPage(),
+                    'total_items' => $profilelist->total(),
+                    'items_per_page' => $profilelist->perPage(),
+                    'current_page_url' => $request->url() . '?page=' . $profilelist->currentPage() . '&' . http_build_query($request->query()), // Construct the current page URL
+                    'next_page_url' => $profilelist->nextPageUrl(),
+                    'previous_page_url' => $profilelist->previousPageUrl(),
+                ],
             ], 200);
         } else {
             return response()->json([
@@ -63,85 +72,86 @@ class CustomerProfileController extends Controller
     }
 
     public function annonfilterindex(Request $request)
-{
-    // Start building the query
-    $query = CustomerProfile::query();
+    {
+        // Start building the query
+        $query = CustomerProfile::query();
 
-    // Define possible filters
-    $gender = $request->gender;
-    $religion = $request->religion;
-    $isVerified = '1';
-    $status = '1';
-    
-    // Apply filters dynamically
-    if (!empty($gender)) {
-        // Use CAST to treat personal_infos as JSON for gender filtering
-        $query->whereRaw("CAST(personal_infos AS json)->>'gender' = ?", [$gender]);
-    }
+        // Define possible filters
+        $gender = $request->gender;
+        $religion = $request->religion;
+        $isVerified = '1';
+        $status = '1';
 
-    if (!empty($religion)) {
-        // Use CAST to treat religious_infos as JSON for religion filtering
-        $query->whereRaw("CAST(religious_infos AS json)->>'religion' = ?", [$religion]);
-    }
-
-    // Apply static filters
-    $query->where('is_verified', $isVerified);
-    $query->where('status', $status);
-
-    // Handle age filtering with min and max range
-    $ageMin = $request->min_age;
-    $ageMax = $request->max_age;
-    if (!empty($ageMin) || !empty($ageMax)) {
-        if ($ageMin && $ageMax) {
-            $query->whereRaw("CAST(personal_infos AS json)->>'age' BETWEEN ? AND ?", [$ageMin, $ageMax]);
-        } elseif ($ageMin) {
-            $query->whereRaw("CAST(personal_infos AS json)->>'age' >= ?", [$ageMin]);
-        } elseif ($ageMax) {
-            $query->whereRaw("CAST(personal_infos AS json)->>'age' <= ?", [$ageMax]);
+        // Apply filters dynamically
+        if (!empty($gender)) {
+            // Use CAST to treat personal_infos as JSON for gender filtering
+            $query->whereRaw("CAST(personal_infos AS json)->>'gender' = ?", [$gender]);
         }
-    }
 
-    // Paginate the filtered results
-    $profilelist = $query->paginate(10);
+        if (!empty($religion)) {
+            // Use CAST to treat religious_infos as JSON for religion filtering
+            $query->whereRaw("CAST(religious_infos AS json)->>'religion' = ?", [$religion]);
+        }
 
-    // Check if there are no results
-    if ($profilelist->isEmpty()) {
+        // Apply static filters
+        $query->where('is_verified', $isVerified);
+        $query->where('status', $status);
+
+        // Handle age filtering with min and max range
+        $ageMin = $request->min_age;
+        $ageMax = $request->max_age;
+        if (!empty($ageMin) || !empty($ageMax)) {
+            if ($ageMin && $ageMax) {
+                $query->whereRaw("CAST(personal_infos AS json)->>'age' BETWEEN ? AND ?", [$ageMin, $ageMax]);
+            } elseif ($ageMin) {
+                $query->whereRaw("CAST(personal_infos AS json)->>'age' >= ?", [$ageMin]);
+            } elseif ($ageMax) {
+                $query->whereRaw("CAST(personal_infos AS json)->>'age' <= ?", [$ageMax]);
+            }
+        }
+
+        // Paginate the filtered results
+        $profilelist = $query->paginate(10);
+
+        // Check if there are no results
+        if ($profilelist->isEmpty()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'No Matched Profile Found',
+                'data' => [],
+            ], 200);
+        }
+
+        // Transform the data using a custom function
+        $data = $profilelist->map(function ($profile) {
+            return extractProfileData($profile); // Ensure extractProfileData function is defined
+        });
+
+        // Return response with pagination info
         return response()->json([
             'success' => true,
-            'message' => 'No Matched Profile Found',
-            'data' => [],
+            'message' => 'Data retrieved successfully',
+            'data' => $data,
+            'pagination' => [
+                'current_page' => $profilelist->currentPage(),
+                'last_page' => $profilelist->lastPage(),
+                'total_items' => $profilelist->total(),
+                'items_per_page' => $profilelist->perPage(),
+                'current_page_url' => $request->url() . '?page=' . $profilelist->currentPage() . '&' . http_build_query($request->query()),
+                'next_page_url' => $profilelist->nextPageUrl(),
+                'previous_page_url' => $profilelist->previousPageUrl(),
+            ],
         ], 200);
     }
 
-    // Transform the data using a custom function
-    $data = $profilelist->map(function ($profile) {
-        return extractProfileData($profile); // Ensure extractProfileData function is defined
-    });
 
-    // Return response with pagination info
-    return response()->json([
-        'success' => true,
-        'message' => 'Data retrieved successfully',
-        'data' => $data,
-        'pagination' => [
-            'current_page' => $profilelist->currentPage(),
-            'last_page' => $profilelist->lastPage(),
-            'total_items' => $profilelist->total(),
-            'items_per_page' => $profilelist->perPage(),
-            'next_page_url' => $profilelist->nextPageUrl(),
-            'previous_page_url' => $profilelist->previousPageUrl(),
-        ],
-    ], 200);
-}
-
-    
 
 
 
     public function shortindex()
     {
         //
-        $profilelist = CustomerProfile::where('is_verified','1')->where('status','1')->orderBy('updated_at', 'asc')->get();
+        $profilelist = CustomerProfile::where('is_verified', '1')->where('status', '1')->orderBy('updated_at', 'asc')->get();
         if ($profilelist->isNotEmpty()) {
             $data = $profilelist->map(function ($profile) {
                 return extractProfileData($profile);  // Use the global function here
@@ -193,8 +203,8 @@ class CustomerProfileController extends Controller
             ->where('religious_infos->recit_quran', $request->recit_quran)
             ->where('religious_infos->read_quaran_daily',  $request->read_quaran_daily)
             ->where('religious_infos->follow_sharia_rule',  $request->follow_sharia_rule)
-            ->where('is_verified','0')
-            ->where('status','0')
+            ->where('is_verified', '0')
+            ->where('status', '0')
             ->get();
 
 
@@ -358,7 +368,7 @@ class CustomerProfileController extends Controller
     //         $validate = Validator::make(
     //             $request->all(),
     //             [
-                
+
     //             ]
     //         );
     //         if ($validate->fails()) {
