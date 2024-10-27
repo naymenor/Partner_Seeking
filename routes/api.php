@@ -42,6 +42,8 @@ Route::group(["prefix"=>"admin",'middleware' => ['auth:sanctum','roleChecker:adm
     Route::post('profile/customer/update/{id}', [CustomerProfileController::class, 'adminupdate'])->name('adminupdateCustomer');
     Route::get('profile/customer/details/{id}', [CustomerProfileController::class, 'adminsingleshow'])->name('adminsingleCustomer');
     Route::post('profile/customer/status/{id}', [CustomerProfileController::class, 'admininactive'])->name('admindeactiveCustomer');
+    Route::post('profile/customer/verification/{id}', [CustomerProfileController::class, 'adminverified'])->name('adminverifiedCustomer');
+    
     Route::get('matched', [CustomerMatchingController::class, 'index'])->name('matching');
     Route::put('matched/accept/{id}', [CustomerMatchingController::class, 'adminAppreoval'])->name('matchingadminAppreoval');
     

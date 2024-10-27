@@ -574,4 +574,23 @@ class CustomerProfileController extends Controller
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
+
+    public function adminverified(Request $request, string $id)
+    {
+        if (!Auth::check()) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 401);
+        }
+
+        try {
+            // Find the profile by UUID
+            $profile = CustomerProfile::where('uuid', $id)->firstOrFail();
+
+            // Update only the status field
+            $profile->update(['is_verified' => $request->is_verified]);
+
+            return response()->json(['success' => true, 'message' => 'Verification Status updated successfully', 'data' => $profile->status], 200);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
 }
