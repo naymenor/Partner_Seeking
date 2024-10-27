@@ -58,7 +58,7 @@ class CustomerProfileController extends Controller
                     'last_page' => $profilelist->lastPage(),
                     'total_items' => $profilelist->total(),
                     'items_per_page' => $profilelist->perPage(),
-                    'current_page_url' => $request->url() . '?page=' . $profilelist->currentPage() . '&' . http_build_query($request->query()), // Construct the current page URL
+                    'current_page_url' => $request->url() . '?page=' . $profilelist->currentPage(), // Construct the current page URL
                     'next_page_url' => $profilelist->nextPageUrl(),
                     'previous_page_url' => $profilelist->previousPageUrl(),
                 ],
@@ -137,7 +137,7 @@ class CustomerProfileController extends Controller
                 'last_page' => $profilelist->lastPage(),
                 'total_items' => $profilelist->total(),
                 'items_per_page' => $profilelist->perPage(),
-                'current_page_url' => $request->url() . '?page=' . $profilelist->currentPage() . '&' . http_build_query($request->query()),
+                'current_page_url' => $request->url() . '?page=' . $profilelist->currentPage(),
                 'next_page_url' => $profilelist->nextPageUrl(),
                 'previous_page_url' => $profilelist->previousPageUrl(),
             ],
