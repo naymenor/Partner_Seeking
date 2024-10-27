@@ -65,7 +65,7 @@ class CustomerProfileController extends Controller
     public function annonfilterindex(Request $request)
     {
         // Start building the query
-        $query = CustomerProfile::query()->paginate(10);
+        $query = CustomerProfile::query();
 
         // Define possible filters
         $filters = [
@@ -97,7 +97,7 @@ class CustomerProfileController extends Controller
         }
 
         // Get the filtered results
-        $profilelist = $query->get();
+        $profilelist = $query->paginate(10);
 
         $data = $profilelist->map(function ($profile) {
             return extractProfileData($profile);
