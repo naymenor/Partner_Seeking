@@ -203,7 +203,7 @@ class CustomerProfileController extends Controller
         } else {
             $genders = 'male';
 
-            $filtered = CustomerProfile::whereRaw("personal_infos::jsonb->>'gender' = ?", [$gender])
+            $filtered = CustomerProfile::whereRaw("personal_infos::jsonb->>'gender' = ?", [$genders])
                 ->whereRaw("CAST(personal_infos::jsonb->>'age' AS int) BETWEEN ? AND ?", [$minAge, $maxAge])
                 ->whereRaw("educational_infos::jsonb->>'education_level' >= ?", [$request->minimum_education_level])
                 ->whereRaw("employment_infos::jsonb->>'salary' >= ?", [$request->minimum_salary])
