@@ -176,7 +176,7 @@ class CustomerProfileController extends Controller
 
 
 
-        $request1 = CustomerProfile::select('preferance_infos', 'personal_infos')->where('user_id', '=', $authuser->id)->get();
+        $request1 = CustomerProfile::select('preferance_infos', 'personal_infos')->where('user_id', '=', $authuser->id)->where('is_verified', '0')->get();
         $request = json_decode($request1[0]['preferance_infos']) ?? null;
         $gender = json_decode($request1[0]['personal_infos']) ?? null;
         $minAge = $request->age_range->min_age ?? null;
