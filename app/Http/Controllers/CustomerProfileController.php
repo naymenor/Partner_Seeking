@@ -177,26 +177,26 @@ class CustomerProfileController extends Controller
 
 
         $request1 = CustomerProfile::select('preferance_infos', 'personal_infos')->where('user_id', '=', $authuser->id)->where('is_verified', '1')->get();
-        $request = json_decode($request1[0]['preferance_infos']) ?? null;
-        $gender = json_decode($request1[0]['personal_infos']) ?? null;
-        $minAge = $request->age_range->min_age ?? null;
-        $maxAge = $request->age_range->max_age ?? null;
+        $request = json_decode($request1[0]['preferance_infos'], true);
+        $gender = json_decode($request1[0]['personal_infos']);
+        $minAge = $request['age_range']['age_min'] ?? null; // Use null coalescing to avoid undefined key
+        $maxAge = $request['age_range']['age_max'] ?? null;
         if ($gender->gender === 'male') {
             $genders = 'female';
 
             $filtered = CustomerProfile::whereRaw("personal_infos::jsonb->>'gender' = ?", [$genders])
                 ->whereRaw("CAST(personal_infos::jsonb->>'age' AS int) BETWEEN ? AND ?", [$minAge, $maxAge])
-                ->whereRaw("educational_infos::jsonb->>'education_level' >= ?", [$request->minimum_education_level])
-                ->whereRaw("marital_infos::jsonb->>'marital_status' = ?", [$request->marital_status])
-                ->whereRaw("personal_infos::jsonb->>'district' = ?", [$request->home_district])
-                ->whereRaw("personal_infos::jsonb->>'lives_in' = ?", [$request->lives_in])
-                ->whereRaw("religious_infos::jsonb->>'religion' = ?", [$request->religion])
-                ->whereRaw("religious_infos::jsonb->>'sect' = ?", [$request->sect])
-                ->whereRaw("religious_infos::jsonb->>'pray_5_times' = ?", [$request->pray_5_times])
-                ->whereRaw("religious_infos::jsonb->>'wear_burka' = ?", [$request->wear_burka])
-                ->whereRaw("religious_infos::jsonb->>'recit_quran' = ?", [$request->recit_quran])
-                ->whereRaw("religious_infos::jsonb->>'read_quaran_daily' = ?", [$request->read_quaran_daily])
-                ->whereRaw("religious_infos::jsonb->>'follow_sharia_rule' = ?", [$request->follow_sharia_rule])
+                ->whereRaw("educational_infos::jsonb->>'education_level' = ?", [$request['minimum_education_level']])
+                ->whereRaw("marital_infos::jsonb->>'marital_status' = ?", [$request['marital_status']])
+                ->whereRaw("personal_infos::jsonb->>'district' = ?", [$request['home_district']])
+                ->whereRaw("personal_infos::jsonb->>'lives_in' = ?", [$request['lives_in']])
+                ->whereRaw("religious_infos::jsonb->>'religion' = ?", [$request['religion']])
+                ->whereRaw("religious_infos::jsonb->>'sect' = ?", [$request['sect']])
+                ->whereRaw("religious_infos::jsonb->>'pray_5_times' = ?", [$request['pray_5_times']])
+                ->whereRaw("religious_infos::jsonb->>'wear_burka' = ?", [$request['wear_burka']])
+                ->whereRaw("religious_infos::jsonb->>'recit_quran' = ?", [$request['recit_quran']])
+                ->whereRaw("religious_infos::jsonb->>'read_quaran_daily' = ?", [$request['read_quaran_daily']])
+                ->whereRaw("religious_infos::jsonb->>'follow_sharia_rule' = ?", [$request['follow_sharia_rule']])
                 ->where('is_verified', '1')
                 ->where('status', '1')
                 ->get();
@@ -205,20 +205,21 @@ class CustomerProfileController extends Controller
 
             $filtered = CustomerProfile::whereRaw("personal_infos::jsonb->>'gender' = ?", [$genders])
                 ->whereRaw("CAST(personal_infos::jsonb->>'age' AS int) BETWEEN ? AND ?", [$minAge, $maxAge])
-                ->whereRaw("educational_infos::jsonb->>'education_level' >= ?", [$request->minimum_education_level])
-                ->whereRaw("employment_infos::jsonb->>'salary' >= ?", [$request->minimum_salary])
-                ->whereRaw("marital_infos::jsonb->>'marital_status' = ?", [$request->marital_status])
-                ->whereRaw("personal_infos::jsonb->>'district' = ?", [$request->home_district])
-                ->whereRaw("personal_infos::jsonb->>'lives_in' = ?", [$request->lives_in])
-                ->whereRaw("religious_infos::jsonb->>'religion' = ?", [$request->religion])
-                ->whereRaw("religious_infos::jsonb->>'sect' = ?", [$request->sect])
-                ->whereRaw("religious_infos::jsonb->>'pray_5_times' = ?", [$request->pray_5_times])
-                ->whereRaw("religious_infos::jsonb->>'recit_quran' = ?", [$request->recit_quran])
-                ->whereRaw("religious_infos::jsonb->>'read_quaran_daily' = ?", [$request->read_quaran_daily])
-                ->whereRaw("religious_infos::jsonb->>'follow_sharia_rule' = ?", [$request->follow_sharia_rule])
+                ->whereRaw("educational_infos::jsonb->>'education_level' = ?", [$request['minimum_education_level']])
+                ->whereRaw("marital_infos::jsonb->>'salary' = ?", [$request['minimum_salary']])
+                ->whereRaw("marital_infos::jsonb->>'marital_status' = ?", [$request['marital_status']])
+                ->whereRaw("personal_infos::jsonb->>'district' = ?", [$request['home_district']])
+                ->whereRaw("personal_infos::jsonb->>'lives_in' = ?", [$request['lives_in']])
+                ->whereRaw("religious_infos::jsonb->>'religion' = ?", [$request['religion']])
+                ->whereRaw("religious_infos::jsonb->>'sect' = ?", [$request['sect']])
+                ->whereRaw("religious_infos::jsonb->>'pray_5_times' = ?", [$request['pray_5_times']])
+                ->whereRaw("religious_infos::jsonb->>'recit_quran' = ?", [$request['recit_quran']])
+                ->whereRaw("religious_infos::jsonb->>'read_quaran_daily' = ?", [$request['read_quaran_daily']])
+                ->whereRaw("religious_infos::jsonb->>'follow_sharia_rule' = ?", [$request['follow_sharia_rule']])
                 ->where('is_verified', '1')
                 ->where('status', '1')
                 ->get();
+
         }
 
         ////////////////////
