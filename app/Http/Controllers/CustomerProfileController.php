@@ -176,7 +176,7 @@ class CustomerProfileController extends Controller
 
 
 
-        $request1 = CustomerProfile::select('preferance_infos', 'personal_infos')->where('user_id', '=', $authuser->id)->where('is_verified', '0')->get();
+        $request1 = CustomerProfile::select('preferance_infos', 'personal_infos')->where('user_id', '=', $authuser->id)->where('is_verified', '1')->get();
         $request = json_decode($request1[0]['preferance_infos']) ?? null;
         $gender = json_decode($request1[0]['personal_infos']) ?? null;
         $minAge = $request->age_range->min_age ?? null;
@@ -197,8 +197,8 @@ class CustomerProfileController extends Controller
             ->where('religious_infos->recit_quran', $request->recit_quran)
             ->where('religious_infos->read_quaran_daily',  $request->read_quaran_daily)
             ->where('religious_infos->follow_sharia_rule',  $request->follow_sharia_rule)
-            ->where('is_verified', '0')
-            ->where('status', '0')
+            ->where('is_verified', '1')
+            ->where('status', '1')
             ->get();
 
         } else {
@@ -217,8 +217,8 @@ class CustomerProfileController extends Controller
             ->where('religious_infos->recit_quran', $request->recit_quran)
             ->where('religious_infos->read_quaran_daily',  $request->read_quaran_daily)
             ->where('religious_infos->follow_sharia_rule',  $request->follow_sharia_rule)
-            ->where('is_verified', '0')
-            ->where('status', '0')
+            ->where('is_verified', '1')
+            ->where('status', '1')
             ->get();
         }
 
