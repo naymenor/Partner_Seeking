@@ -187,13 +187,13 @@ class CustomerProfileController extends Controller
             $filtered = CustomerProfile::where('personal_infos->gender', $gender)
             ->whereBetween('personal_infos->age', ['min' => $minAge, 'max' => $maxAge])
             ->where('educational_infos->education_level', '>=', $request->minimum_education_level)
-            ->where('employment_infos->salary', '>=', $request->minimum_salary)
             ->where('marital_infos->marital_status', $request->marital_status,)
             ->where('personal_infos->district', $request->home_district)
             ->where('personal_infos->lives_in', $request->lives_in)
             ->where('religious_infos->religion', $request->religion)
             ->where('religious_infos->sect', $request->sect)
             ->where('religious_infos->pray_5_times', $request->pray_5_times)
+            ->where('religious_infos->wear_burka', $request->wear_burka)
             ->where('religious_infos->recit_quran', $request->recit_quran)
             ->where('religious_infos->read_quaran_daily',  $request->read_quaran_daily)
             ->where('religious_infos->follow_sharia_rule',  $request->follow_sharia_rule)
@@ -214,7 +214,6 @@ class CustomerProfileController extends Controller
             ->where('religious_infos->religion', $request->religion)
             ->where('religious_infos->sect', $request->sect)
             ->where('religious_infos->pray_5_times', $request->pray_5_times)
-            ->where('religious_infos->wear_burka', $request->wear_burka)
             ->where('religious_infos->recit_quran', $request->recit_quran)
             ->where('religious_infos->read_quaran_daily',  $request->read_quaran_daily)
             ->where('religious_infos->follow_sharia_rule',  $request->follow_sharia_rule)
@@ -651,7 +650,7 @@ class CustomerProfileController extends Controller
             $profile = CustomerProfile::where('uuid', $id)->firstOrFail();
 
             // Update only the status field
-            $profile->update(['is_verified' => $request->is_verified]);
+            $profile->update(['is_verified' => $request->is_verified, 'status' => 1]);
 
             return response()->json(['success' => true, 'message' => 'Verification Status updated successfully', 'data' => $profile->status], 200);
         } catch (\Exception $e) {
